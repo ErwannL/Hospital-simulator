@@ -1,0 +1,40 @@
+
+rooms:
+  scanner:
+    position_x: 2
+    position_y: 2
+    position_z: 0
+  salle_attente:
+    position_x: 5
+    position_y: 5
+    position_z: 2
+  bloc_operatoire:
+    position_x: 8
+    position_y: 2
+    position_z: 4
+
+groups:
+  - group_id: 1
+    num_people: 5
+    color: "blue"
+    path: ["scanner", "salle_attente", "bloc_operatoire"]
+    room_times:
+      - time_in_scanner: 50
+      - time_in_salle_attente: 100
+      - time_in_bloc_operatoire: 80
+    travel_times:
+      - travel_time_scanner_to_salle_attente: 50
+      - travel_time_salle_attente_to_bloc_operatoire: 50
+  - group_id: 2
+    num_people: 3
+    color: "green"
+    path: ["salle_attente", "bloc_operatoire", "scanner"]
+    room_times:
+      - time_in_salle_attente: 80
+      - time_in_bloc_operatoire: 60
+      - time_in_scanner: 90
+    travel_times:
+      - travel_time_salle_attente_to_bloc_operatoire: 60
+      - travel_time_bloc_operatoire_to_scanner: 40
+
+close_delay: 5
