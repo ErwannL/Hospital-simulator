@@ -4,21 +4,25 @@ rooms:
     position_x: 2
     position_y: 2
     position_z: 0
+    color: "red"
   salle_attente:
     position_x: 5
     position_y: 5
     position_z: 2
+    color: "yellow"
   bloc_operatoire:
     position_x: 8
     position_y: 2
     position_z: 4
+    color: "green"
   irm_room:
     position_x: 10
     position_y: 8
     position_z: 3
+    color: "blue"
 
 groups:
-  - group_id: 1
+  - group_name: "Equipe Bleue"
     num_people: 5
     color: "blue"
     path: ["scanner", "salle_attente", "bloc_operatoire", "irm_room"]
@@ -28,7 +32,7 @@ groups:
       - time_in_bloc_operatoire: 80
       - time_in_irm_room: 120
 
-  - group_id: 2
+  - group_name: "Team 123"
     num_people: 3
     color: "green"
     path: ["salle_attente", "bloc_operatoire", "scanner", "irm_room"]
