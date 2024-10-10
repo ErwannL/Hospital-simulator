@@ -12,29 +12,30 @@ rooms:
     position_x: 8
     position_y: 2
     position_z: 4
+  irm_room:
+    position_x: 10
+    position_y: 8
+    position_z: 3
 
 groups:
   - group_id: 1
     num_people: 5
     color: "blue"
-    path: ["scanner", "salle_attente", "bloc_operatoire"]
+    path: ["scanner", "salle_attente", "bloc_operatoire", "irm_room"]
     room_times:
       - time_in_scanner: 50
       - time_in_salle_attente: 100
       - time_in_bloc_operatoire: 80
-    travel_times:
-      - travel_time_scanner_to_salle_attente: 50
-      - travel_time_salle_attente_to_bloc_operatoire: 50
+      - time_in_irm_room: 120
+
   - group_id: 2
     num_people: 3
     color: "green"
-    path: ["salle_attente", "bloc_operatoire", "scanner"]
+    path: ["salle_attente", "bloc_operatoire", "scanner", "irm_room"]
     room_times:
       - time_in_salle_attente: 80
       - time_in_bloc_operatoire: 60
       - time_in_scanner: 90
-    travel_times:
-      - travel_time_salle_attente_to_bloc_operatoire: 60
-      - travel_time_bloc_operatoire_to_scanner: 40
+      - time_in_irm_room: 100
 
 close_delay: 5
