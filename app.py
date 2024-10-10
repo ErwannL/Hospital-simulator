@@ -2,6 +2,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import yaml
+from matplotlib.widgets import Slider
 
 # Load the config file
 with open('config.yaml', 'r') as file:
@@ -88,8 +89,8 @@ groups = [
     for group in config['groups']
 ]
 
-# Start animation
-fig = plt.figure()
+# Start animation with slider
+fig = plt.figure(figsize=(8, 8))
 ax = fig.add_subplot(111, projection='3d')
 ax.set_xlim(0, 10)
 ax.set_ylim(0, 10)
@@ -97,18 +98,31 @@ ax.set_zlim(0, 10)
 
 draw_rooms(ax)
 
+# Create slider axes
+ax_slider = plt.axes([0.25, 0.02, 0.5, 0.03], facecolor='lightgoldenrodyellow')  # Position of the slider
+speed_slider = Slider(ax_slider, 'Speed', 0.1, 1.0, valinit=0.1)
+
 # Close delay from config
 close_delay = config.get('close_delay', 5)
 
+def update_speed(val):
+    """Update the speed of all groups based on slider value."""
+    speed = speed_slider.val
+    for group in groups:
+        group.speed = speed
+
+# Set up the slider to update speed dynamically
+speed_slider.on_changed(update_speed)
+
 while True:
-    ax.cla()
+    ax.cla()  # Clear the axes
     draw_rooms(ax)
 
     for group in groups:
         group.update()
         ax.scatter(group.positions[:, 0], group.positions[:, 1], group.positions[:, 2],
                    color=group.color, label=group.group_name)
-        
+
         # Add the group name above the group position
         group_center = np.mean(group.positions, axis=0)  # Find the group's center position
         ax.text(group_center[0], group_center[1], group_center[2] + 0.3, group.group_name,
@@ -120,5 +134,6 @@ while True:
 
     plt.pause(0.01)
 
+# Wait before closing the plot
 plt.pause(close_delay)
 plt.close()
