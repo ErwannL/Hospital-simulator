@@ -107,6 +107,17 @@ close_delay = config.get('close_delay', 5)
 
 # Variable to control animation pause state
 paused = False
+window_closed = False  # Flag to check if window is closed
+all_groups_completed = False  # Flag to check if all groups have completed
+
+# Function to handle window close event
+def on_close(event):
+    global window_closed
+    window_closed = True
+    plt.close(fig)
+
+# Connect the close event to the function
+fig.canvas.mpl_connect('close_event', on_close)
 
 # Function to update speed of all groups
 def update_speed(val):
@@ -134,6 +145,9 @@ def on_key(event):
 fig.canvas.mpl_connect('key_press_event', on_key)
 
 while True:
+    if window_closed:
+        break  # Exit the loop if the window is closed
+
     if not paused:
         ax.cla()  # Clear the axes
         draw_rooms(ax)
@@ -148,12 +162,17 @@ while True:
             ax.text(group_center[0], group_center[1], group_center[2] + 0.3, group.group_name,
                     fontsize=10, color=group.color, ha='center')
 
+        # Check if all groups have completed their paths
         if all(group.completed for group in groups):
+            all_groups_completed = True
             print(f"All groups have completed their paths. Closing in {close_delay} seconds.")
+            plt.pause(close_delay)
             break
 
     plt.pause(0.01)
 
 # Wait before closing the plot
-plt.pause(close_delay)
 plt.close()
+
+if (not all_groups_completed):
+    print("Window closed. Stopping the animation.")
