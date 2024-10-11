@@ -8,6 +8,9 @@ from matplotlib.widgets import Slider
 with open('config.yaml', 'r') as file:
     config = yaml.safe_load(file)
 
+# Extract project name for the figure title
+project_name = config.get('project_name', 'Simulation')
+
 # Extract rooms from config, now including colors
 rooms = {room: {'position': [coord['position_x'], coord['position_y'], coord['position_z']],
                 'color': coord.get('color', 'k')}  # Default to black if no color is provided
@@ -91,6 +94,7 @@ groups = [
 
 # Start animation with slider
 fig = plt.figure(figsize=(8, 8))
+fig.canvas.manager.set_window_title(project_name)  # Set the project name as the window title
 ax = fig.add_subplot(111, projection='3d')
 ax.set_xlim(0, 10)
 ax.set_ylim(0, 10)
@@ -144,35 +148,39 @@ def on_key(event):
 # Connect the key press event
 fig.canvas.mpl_connect('key_press_event', on_key)
 
-while True:
-    if window_closed:
-        break  # Exit the loop if the window is closed
+try:
+    while True:
+        if window_closed:
+            break  # Exit the loop if the window is closed
 
-    if not paused:
-        ax.cla()  # Clear the axes
-        draw_rooms(ax)
+        if not paused:
+            ax.cla()  # Clear the axes
+            draw_rooms(ax)
 
-        for group in groups:
-            group.update()
-            ax.scatter(group.positions[:, 0], group.positions[:, 1], group.positions[:, 2],
-                       color=group.color, label=group.group_name)
+            for group in groups:
+                group.update()
+                ax.scatter(group.positions[:, 0], group.positions[:, 1], group.positions[:, 2],
+                           color=group.color, label=group.group_name)
 
-            # Add the group name above the group position
-            group_center = np.mean(group.positions, axis=0)  # Find the group's center position
-            ax.text(group_center[0], group_center[1], group_center[2] + 0.3, group.group_name,
-                    fontsize=10, color=group.color, ha='center')
+                # Add the group name above the group position
+                group_center = np.mean(group.positions, axis=0)  # Find the group's center position
+                ax.text(group_center[0], group_center[1], group_center[2] + 0.3, group.group_name,
+                        fontsize=10, color=group.color, ha='center')
 
-        # Check if all groups have completed their paths
-        if all(group.completed for group in groups):
-            all_groups_completed = True
-            print(f"All groups have completed their paths. Closing in {close_delay} seconds.")
-            plt.pause(close_delay)
-            break
+            # Check if all groups have completed their paths
+            if all(group.completed for group in groups):
+                all_groups_completed = True
+                print(f"All groups have completed their paths. Closing in {close_delay} seconds.")
+                plt.pause(close_delay)
+                break
 
-    plt.pause(0.01)
+        plt.pause(0.01)
+
+except KeyboardInterrupt:
+    print("Animation interrupted by user (Ctrl+C).")
 
 # Wait before closing the plot
 plt.close()
 
-if (not all_groups_completed):
+if not all_groups_completed:
     print("Window closed. Stopping the animation.")

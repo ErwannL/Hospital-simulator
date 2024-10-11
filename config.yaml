@@ -1,4 +1,6 @@
 
+project_name: "Hospital_simulator"
+
 rooms:
   scanner:
     position_x: 2
