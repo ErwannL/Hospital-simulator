@@ -105,6 +105,10 @@ speed_slider = Slider(ax_slider, 'Speed', 0.1, 1.0, valinit=0.1)
 # Close delay from config
 close_delay = config.get('close_delay', 5)
 
+# Variable to control animation pause state
+paused = False
+
+# Function to update speed of all groups
 def update_speed(val):
     """Update the speed of all groups based on slider value."""
     speed = speed_slider.val
@@ -114,23 +118,39 @@ def update_speed(val):
 # Set up the slider to update speed dynamically
 speed_slider.on_changed(update_speed)
 
+# Function to handle keyboard events
+def on_key(event):
+    global paused
+    if event.key == ' ':
+        paused = not paused
+        if paused:
+            # Draw pause symbol (two vertical bars)
+            ax.text(0, 0, 9, '| |', fontsize=50, color='black', ha='center', va='center', transform=ax.transAxes)
+        else:
+            for text in ax.texts:
+                text.remove()  # Remove each text object
+
+# Connect the key press event
+fig.canvas.mpl_connect('key_press_event', on_key)
+
 while True:
-    ax.cla()  # Clear the axes
-    draw_rooms(ax)
+    if not paused:
+        ax.cla()  # Clear the axes
+        draw_rooms(ax)
 
-    for group in groups:
-        group.update()
-        ax.scatter(group.positions[:, 0], group.positions[:, 1], group.positions[:, 2],
-                   color=group.color, label=group.group_name)
+        for group in groups:
+            group.update()
+            ax.scatter(group.positions[:, 0], group.positions[:, 1], group.positions[:, 2],
+                       color=group.color, label=group.group_name)
 
-        # Add the group name above the group position
-        group_center = np.mean(group.positions, axis=0)  # Find the group's center position
-        ax.text(group_center[0], group_center[1], group_center[2] + 0.3, group.group_name,
-                fontsize=10, color=group.color, ha='center')
+            # Add the group name above the group position
+            group_center = np.mean(group.positions, axis=0)  # Find the group's center position
+            ax.text(group_center[0], group_center[1], group_center[2] + 0.3, group.group_name,
+                    fontsize=10, color=group.color, ha='center')
 
-    if all(group.completed for group in groups):
-        print(f"All groups have completed their paths. Closing in {close_delay} seconds.")
-        break
+        if all(group.completed for group in groups):
+            print(f"All groups have completed their paths. Closing in {close_delay} seconds.")
+            break
 
     plt.pause(0.01)
 
