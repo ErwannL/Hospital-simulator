@@ -62,3 +62,16 @@ This project is licensed under the MIT License - see the [LICENSE](License) file
 [Matplotlib](https://matplotlib.org/) for the 3D visualization capabilities.
 [NumPy](https://numpy.org/) for numerical operations.
 [PyYAML](https://pyyaml.org/) for parsing YAML files.
+
+---
+---
+
+## For developpers
+
+### To create the .exe
+
+```bash
+pip install pyinstaller
+pyinstaller --onefile --add-data "config.yaml;." app.py
+cp dist/app.exe .
+```
